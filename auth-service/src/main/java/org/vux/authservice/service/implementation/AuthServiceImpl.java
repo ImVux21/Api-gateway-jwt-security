@@ -2,8 +2,6 @@ package org.vux.authservice.service.implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,7 +20,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
-//    private final AuthenticationManager authenticationManager;
 
     @Override
     public CommonResponse register(RegisterRequest registerRequest) {
@@ -56,17 +53,6 @@ public class AuthServiceImpl implements AuthService {
                 .block();
 
         UserAuthInfo userAuthInfo = new ObjectMapper().convertValue(response.getData(), UserAuthInfo.class);
-
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-//                    loginRequest.getEmail(), passwordEncoder.encode(loginRequest.getPassword())
-//            ));
-//        } catch (Exception e) {
-//            return CommonResponse.builder()
-//                    .status(400)
-//                    .message("Invalid credentials")
-//                    .build();
-//        }
 
         if (userAuthInfo == null || !passwordEncoder.matches(loginRequest.getPassword(), userAuthInfo.getPassword())) {
             response = CommonResponse.builder()
